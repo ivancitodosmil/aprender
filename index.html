@@ -1,12 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meme Generator</title>
 </head>
+
 <body>
-    <h1>Curso de Git Solnus</h1>
-    <h2>Holaaaaaaaa</h2>
+
+  <section>
+    <header class="header">
+      <img class="logo-img" src="http://www.pngall.com/wp-content/uploads/2016/05/Trollface.png" alt="problem?" />
+      <h1 class="title">Meme Generator</h1>
+    </header>
+    <h3 class="subtitle">Fill out the form to generate your meme</h3>
+    <form action="" type="submit" class="form">
+      <div class="container">
+        <div class="row">
+          <label for="meme-url">Image URL</label>
+          <input type="text" name="meme-url" placeholder="Input the URL for your meme image" />
+        </div>
+        <div class="row">
+          <label for="top-text">Top Text</label>
+          <input type="text" name="top-text" placeholder="(optional) Input Top Text" />
+        </div>
+        <div class="row">
+          <label for="bottom-text">Bottom Text</label>
+          <input type="text" name="bottom-text" placeholder="(optional) Input Bottom Text" />
+        </div>
+      </div>
+      <button class="btn">Submit</button>
+    </form>
+  </section>
+  <div class="display">
+    <!-- <span class="delete">X</span> -->
+    <!-- <div class="meme">
+        <img
+          src="https://cdn.vox-cdn.com/thumbor/2yltsYkqhIIiu6NxFLEqvHmyaoQ=/69x0:856x525/1400x1050/filters:focal(69x0:856x525):format(png)/cdn.vox-cdn.com/uploads/chorus_image/image/50263513/Screen_Shot_2016-08-01_at_12.34.21_PM.0.0.png"
+          alt="meme image" class="img">
+        <h2 class="top">One does not simply walk</h2>
+        <h2 class="bottom">Into Mordor</h2>
+      </div> -->
+  </div>
+
+
+  <script src="app.js"></script>
 </body>
+
 </html>
