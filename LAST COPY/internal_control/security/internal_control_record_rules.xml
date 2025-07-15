@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Regla para empleados: solo pueden ver sus propias respuestas y asignaciones -->
+        <record id="survey_user_input_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo sus propias respuestas de encuesta</field>
+            <field name="model_id" ref="model_survey_user_input"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <record id="in_survey_campaign_assignment_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo sus propias asignaciones de campaña</field>
+            <field name="model_id" ref="model_in_survey_campaign_assignment"/>
+            <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <record id="survey_calculate_report_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo sus propios reportes de cálculo</field>
+            <field name="model_id" ref="model_survey_calculate_report"/>
+            <field name="domain_force">[('user_input_id.employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <record id="survey_revised_items_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo sus propias métricas de items revisados</field>
+            <field name="model_id" ref="model_survey_revised_items"/>
+            <field name="domain_force">[('calculate_report_id.user_input_id.employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <record id="survey_compliance_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo sus propias métricas de cumplimiento</field>
+            <field name="model_id" ref="model_survey_compliance"/>
+            <field name="domain_force">[('calculate_report_id.user_input_id.employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <record id="survey_satisfaction_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo sus propias métricas de satisfacción</field>
+            <field name="model_id" ref="model_survey_satisfaction"/>
+            <field name="domain_force">[('calculate_report_id.user_input_id.employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <record id="survey_participation_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo sus propias métricas de participación</field>
+            <field name="model_id" ref="model_survey_participation"/>
+            <field name="domain_force">[('calculate_report_id.user_input_id.employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <!-- Regla para empleados: solo pueden ver encuestas -->
+        <record id="survey_survey_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo encuestas</field>
+            <field name="model_id" ref="model_survey_survey"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <!-- Regla para empleados: pueden ver todas las campañas (el acceso se controla por asignaciones) -->
+        <record id="in_survey_campaign_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Acceso a campañas</field>
+            <field name="model_id" ref="model_in_survey_campaign"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <!-- Regla para empleados: solo pueden ver fechas de encuestas -->
+        <record id="survey_dates_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo fechas de encuestas</field>
+            <field name="model_id" ref="model_survey_dates"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <!-- Regla para empleados: solo pueden ver categorías y etiquetas activas -->
+        <record id="survey_category_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo categorías activas</field>
+            <field name="model_id" ref="model_survey_category"/>
+            <field name="domain_force">[('active', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <record id="survey_tag_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo etiquetas activas</field>
+            <field name="model_id" ref="model_survey_tag"/>
+            <field name="domain_force">[('active', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <!-- Regla para empleados: solo pueden ver actividades relacionadas con sus asignaciones -->
+        <record id="mail_activity_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo actividades relacionadas con sus asignaciones</field>
+            <field name="model_id" ref="mail.model_mail_activity"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <!-- Regla para empleados: solo pueden usar wizards de exportación para sus propios datos -->
+        <record id="survey_export_report_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo exportar sus propios reportes</field>
+            <field name="model_id" ref="model_survey_export_report"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <record id="importar_estructura_encuesta_wizard_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo importar estructuras para encuestas activas</field>
+            <field name="model_id" ref="model_importar_estructura_encuesta_wizard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <record id="survey_user_input_assign_employee_rule" model="ir.rule">
+            <field name="name">Empleados: Solo sus propias asignaciones de encuesta</field>
+            <field name="model_id" ref="model_survey_user_input_assign"/>
+            <field name="domain_force">[('user_input_id.employee_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_employee'))]"/>
+        </record>
+
+        <!-- Reglas para administradores: acceso completo a todos los datos -->
+        <!-- Quitar acceso total a admin y poner filtro por departamento en las reglas relevantes -->
+        <!-- Encuestas -->
+        <record id="survey_survey_admin_rule" model="ir.rule">
+            <field name="name">Administradores: Solo encuestas de su departamento</field>
+            <field name="model_id" ref="model_survey_survey"/>
+            <field name="domain_force">['|',('department_id','=',user.employee_id.department_id.id),('department_id','=',False)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_admin'))]"/>
+        </record>
+        <!-- Participaciones -->
+        <record id="survey_user_input_admin_rule" model="ir.rule">
+            <field name="name">Administradores: Solo participaciones de su departamento</field>
+            <field name="model_id" ref="model_survey_user_input"/>
+            <field name="domain_force">['|',('survey_id.department_id','=',user.employee_id.department_id.id),('survey_id.department_id','=',False)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_admin'))]"/>
+        </record>
+        <!-- Reportes de cálculo -->
+        <record id="survey_calculate_report_admin_rule" model="ir.rule">
+            <field name="name">Administradores: Solo reportes de su departamento</field>
+            <field name="model_id" ref="model_survey_calculate_report"/>
+            <field name="domain_force">['|',('user_input_id.survey_id.department_id','=',user.employee_id.department_id.id),('user_input_id.survey_id.department_id','=',False)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_admin'))]"/>
+        </record>
+        <!-- Métricas (todas) -->
+        <record id="survey_revised_items_admin_rule" model="ir.rule">
+            <field name="name">Administradores: Solo métricas de su departamento</field>
+            <field name="model_id" ref="model_survey_revised_items"/>
+            <field name="domain_force">['|',('survey_id.department_id','=',user.employee_id.department_id.id),('survey_id.department_id','=',False)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_admin'))]"/>
+        </record>
+        <record id="survey_compliance_admin_rule" model="ir.rule">
+            <field name="name">Administradores: Solo métricas de su departamento</field>
+            <field name="model_id" ref="model_survey_compliance"/>
+            <field name="domain_force">['|',('survey_id.department_id','=',user.employee_id.department_id.id),('survey_id.department_id','=',False)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_admin'))]"/>
+        </record>
+        <record id="survey_satisfaction_admin_rule" model="ir.rule">
+            <field name="name">Administradores: Solo métricas de su departamento</field>
+            <field name="model_id" ref="model_survey_satisfaction"/>
+            <field name="domain_force">['|',('survey_id.department_id','=',user.employee_id.department_id.id),('survey_id.department_id','=',False)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_admin'))]"/>
+        </record>
+        <record id="survey_participation_admin_rule" model="ir.rule">
+            <field name="name">Administradores: Solo métricas de su departamento</field>
+            <field name="model_id" ref="model_survey_participation"/>
+            <field name="domain_force">['|',('survey_id.department_id','=',user.employee_id.department_id.id),('survey_id.department_id','=',False)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_admin'))]"/>
+        </record>
+
+        <!-- Regla para administradores del sistema (usuarios con acceso técnico) -->
+        <record id="internal_control_system_admin_rule" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno</field>
+            <field name="model_id" ref="model_in_survey_campaign"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_2" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Campañas)</field>
+            <field name="model_id" ref="model_in_survey_campaign_assignment"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_3" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Respuestas)</field>
+            <field name="model_id" ref="model_survey_user_input"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_4" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Encuestas)</field>
+            <field name="model_id" ref="model_survey_survey"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_5" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Reportes)</field>
+            <field name="model_id" ref="model_survey_calculate_report"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_6" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Métricas)</field>
+            <field name="model_id" ref="model_survey_revised_items"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_7" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Cumplimiento)</field>
+            <field name="model_id" ref="model_survey_compliance"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_8" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Satisfacción)</field>
+            <field name="model_id" ref="model_survey_satisfaction"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_9" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Participación)</field>
+            <field name="model_id" ref="model_survey_participation"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_10" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Categorías)</field>
+            <field name="model_id" ref="model_survey_category"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_11" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Etiquetas)</field>
+            <field name="model_id" ref="model_survey_tag"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_12" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Fechas)</field>
+            <field name="model_id" ref="model_survey_dates"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_13" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Asignaciones)</field>
+            <field name="model_id" ref="model_survey_user_input_assign"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_14" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Exportación)</field>
+            <field name="model_id" ref="model_survey_export_report"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_15" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Importación)</field>
+            <field name="model_id" ref="model_importar_estructura_encuesta_wizard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <record id="internal_control_system_admin_rule_16" model="ir.rule">
+            <field name="name">Administradores del Sistema: Acceso completo a Control Interno (Actividades)</field>
+            <field name="model_id" ref="mail.model_mail_activity"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        </record>
+
+        <!-- Reglas para superadministrador del módulo: acceso total a todo lo del módulo -->
+        <record id="survey_survey_superadmin_rule" model="ir.rule">
+            <field name="name">Superadmin: Acceso total a encuestas</field>
+            <field name="model_id" ref="model_survey_survey"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_superadmin'))]"/>
+        </record>
+        <record id="survey_user_input_superadmin_rule" model="ir.rule">
+            <field name="name">Superadmin: Acceso total a participaciones</field>
+            <field name="model_id" ref="model_survey_user_input"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_superadmin'))]"/>
+        </record>
+        <record id="survey_calculate_report_superadmin_rule" model="ir.rule">
+            <field name="name">Superadmin: Acceso total a reportes de cálculo</field>
+            <field name="model_id" ref="model_survey_calculate_report"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_superadmin'))]"/>
+        </record>
+        <record id="survey_revised_items_superadmin_rule" model="ir.rule">
+            <field name="name">Superadmin: Acceso total a métricas de items revisados</field>
+            <field name="model_id" ref="model_survey_revised_items"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_superadmin'))]"/>
+        </record>
+        <record id="survey_compliance_superadmin_rule" model="ir.rule">
+            <field name="name">Superadmin: Acceso total a métricas de cumplimiento</field>
+            <field name="model_id" ref="model_survey_compliance"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_superadmin'))]"/>
+        </record>
+        <record id="survey_satisfaction_superadmin_rule" model="ir.rule">
+            <field name="name">Superadmin: Acceso total a métricas de satisfacción</field>
+            <field name="model_id" ref="model_survey_satisfaction"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_superadmin'))]"/>
+        </record>
+        <record id="survey_participation_superadmin_rule" model="ir.rule">
+            <field name="name">Superadmin: Acceso total a métricas de participación</field>
+            <field name="model_id" ref="model_survey_participation"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('internal_control.internal_control_superadmin'))]"/>
+        </record>
+        <!-- Puedes agregar más reglas para otros modelos del módulo si lo necesitas -->
+
+    </data>
+</odoo> 

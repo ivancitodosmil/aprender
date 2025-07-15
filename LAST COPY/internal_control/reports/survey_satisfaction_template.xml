@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_survey_satisfaction">
+        <t t-call="web.basic_layout">
+            <t t-if="docs and len(docs) > 0">
+                <t t-set="doc" t-value="docs[0]"/>
+                <t t-set="company" t-value="env.company"/>
+
+                <!-- PORTADA -->
+                <div class="page" style="width: 100%; min-height: 100vh; font-family: 'Helvetica', sans-serif; background-color: white; margin: 0; padding: 40px; page-break-after: always; display: flex; flex-direction: column;">
+                    <div style="margin-bottom: 100px;">
+                        <img t-att-src="'https://farmaciascuxibamba.com.ec/web/image/res.company/%s/logo' % company.id"
+                            style="height: 100px;" alt="Logo"/>
+                    </div>
+
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                        <h2 style="margin: 0 0 20px 0; font-size: 32px; font-weight: bold; text-transform: uppercase;">Reporte de Satisfacción</h2>
+
+                        <div style="width: 80%; margin: 0 auto;">
+                            <div style="background-color: rgba(244, 220, 49, 0.35); padding: 15px; text-align: justify; font-size: 14px;">
+                                <div style="display: flex; margin-bottom: 10px; white-space: nowrap;">
+                                    <span style="font-weight: bold; margin-right: 5px;">Encuesta:</span>
+                                    <span><t t-esc="doc.survey_id.title"/></span>
+                                </div>
+                                <div style="display: flex; margin-bottom: 10px; white-space: nowrap;">
+                                    <span style="font-weight: bold; margin-right: 5px;">Categoría:</span>
+                                    <span><t t-esc="doc.survey_id.category_id.name"/></span>
+                                </div>
+                                <div style="display: flex; margin-bottom: 10px; white-space: nowrap;">
+                                    <span style="font-weight: bold; margin-right: 5px;">Fecha:</span>
+                                    <span><t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTENIDO -->
+                <div class="page" style="position: relative; font-family: 'Helvetica', sans-serif; color: #2c3e50; padding-top: 0px; background-color: rgba(147, 147, 147, 0.03);">
+                    <div style="position: relative; z-index: 1;">
+                        <h3 style="margin-top: 0; font-weight: bold;">Resultados de Satisfacción:</h3>
+                        
+                        <div style="padding: 20px; margin-top: 15px;">
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                                <thead>
+                                    <tr style="background-color: #34495e; color: white;">
+                                        <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Sección</th>
+                                        <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Total Encuestas</th>
+                                        <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Positivas</th>
+                                        <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Satisfacción (1-5)</th>
+                                        <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">% Satisfacción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="docs" t-as="item">
+                                        <tr>
+                                            <td style="border: 1px solid #ddd; padding: 12px;"><t t-esc="item.page_name"/></td>
+                                            <td style="border: 1px solid #ddd; padding: 12px; text-align: center;"><t t-esc="item.total_encuestas"/></td>
+                                            <td style="border: 1px solid #ddd; padding: 12px; text-align: center;"><t t-esc="item.encuestas_positivas"/></td>
+                                            <td style="border: 1px solid #ddd; padding: 12px; text-align: center;"><t t-esc="'%.2f' % item.satisfaccion"/></td>
+                                            <td style="border: 1px solid #ddd; padding: 12px; text-align: center;"><t t-esc="'%.1f' % item.porcentaje_satisfaccion"/>%</td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <!-- Resumen -->
+                            <div style="background-color: #ecf0f1; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                                <h4 style="margin-top: 0; color: #2c3e50;">Resumen:</h4>
+                                <t t-set="total_encuestas" t-value="sum(docs.mapped('total_encuestas'))"/>
+                                <t t-set="total_positivas" t-value="sum(docs.mapped('encuestas_positivas'))"/>
+                                <t t-set="promedio_satisfaccion" t-value="sum(docs.mapped('satisfaccion')) / len(docs) if docs else 0"/>
+                                <t t-set="promedio_porcentaje" t-value="sum(docs.mapped('porcentaje_satisfaccion')) / len(docs) if docs else 0"/>
+                                
+                                <p><strong>Total Encuestas:</strong> <t t-esc="total_encuestas"/></p>
+                                <p><strong>Total Positivas:</strong> <t t-esc="total_positivas"/></p>
+                                <p><strong>Promedio Satisfacción:</strong> <t t-esc="'%.2f' % promedio_satisfaccion"/></p>
+                                <p><strong>Promedio % Satisfacción:</strong> <t t-esc="'%.1f' % promedio_porcentaje"/>%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="border-top: 1px solid #ccc; margin-top: 40px; padding-top: 10px; text-align: center; font-size: 10px; color: #7f8c8d;">
+                        <p>Reporte generado por el sistema interno de encuestas - Farmacias Cuxibamba</p>
+                        <p>Dirección: Loja, Ecuador | Tel: (07) 258-XXXX | www.farmaciascuxibamba.com</p>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo> 

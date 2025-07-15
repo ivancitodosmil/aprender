@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Action for survey metrics export without group by -->
+    <record id="action_export_survey_metrics" model="ir.actions.report">
+        <field name="name">Exportar Métricas de Encuestas</field>
+        <field name="model">ir.exports</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">internal_control.export_survey_metrics</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Action for survey metrics export with group by -->
+    <record id="action_export_survey_metrics_group_by" model="ir.actions.report">
+        <field name="name">Exportar Métricas de Encuestas Agrupadas</field>
+        <field name="model">ir.exports</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">internal_control.export_survey_metrics_group_by</field>
+    </record>
+
+    <!-- Template for survey metrics export without group by -->
+    <template id="export_survey_metrics">
+        <t t-call="web.html_container">
+            <t t-call="web.internal_layout">
+                <div class="page">
+                    <div class="container-fluid">
+                        <!-- Header -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h2 class="text-center mb-3">Reporte de Métricas de Encuestas</h2>
+                                <p class="text-center text-muted">
+                                    Generado el: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Survey Information -->
+                        <t t-if="record.get('survey_info')">
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-info text-white">
+                                            <h5 class="mb-0">Información de la Encuesta</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong>Encuesta:</strong> <span t-out="record['survey_info'].get('name', '-')"/>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <strong>Fecha de Creación:</strong> <span t-out="record['survey_info'].get('create_date', '-')"/>
+                                                </div>
+                                            </div>
+                                            <t t-if="record['survey_info'].get('department')">
+                                                <div class="row mt-2">
+                                                    <div class="col-md-6">
+                                                        <strong>Departamento:</strong> <span t-out="record['survey_info']['department']"/>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                            <t t-if="record['survey_info'].get('assigned_persons')">
+                                                <div class="row mt-2">
+                                                    <div class="col-12">
+                                                        <strong>Personas Asignadas:</strong>
+                                                        <ul class="list-unstyled mt-1">
+                                                            <t t-foreach="record['survey_info']['assigned_persons']" t-as="person">
+                                                                <li>
+                                                                    <span t-out="person['name']"/>
+                                                                    <t t-if="person.get('job')"> - <span t-out="person['job']"/></t>
+                                                                    <t t-if="person.get('department')"> (<span t-out="person['department']"/>)</t>
+                                                                </li>
+                                                            </t>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Participants Summary Table -->
+                        <t t-if="record.get('participants_summary')">
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h5 class="mb-0">Resumen de Participantes</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <table class="table table-bordered table-sm">
+                                                <thead style="background-color: #f8f9fa;">
+                                                    <tr>
+                                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Participante</th>
+                                                        <t t-if="record.get('show_department')">
+                                                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Departamento</th>
+                                                        </t>
+                                                        <t t-if="record.get('show_job')">
+                                                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Cargo</th>
+                                                        </t>
+                                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="record['participants_summary']" t-as="participant">
+                                                        <tr>
+                                                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                                                <span t-out="participant['name']"/>
+                                                            </td>
+                                                            <t t-if="record.get('show_department')">
+                                                                <td style="border: 1px solid #ddd; padding: 8px;">
+                                                                    <span t-out="participant.get('department', '-')"/>
+                                                                </td>
+                                                            </t>
+                                                            <t t-if="record.get('show_job')">
+                                                                <td style="border: 1px solid #ddd; padding: 8px;">
+                                                                    <span t-out="participant.get('job', '-')"/>
+                                                                </td>
+                                                            </t>
+                                                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                                                <span t-if="participant['responded']" class="badge bg-success">Respondió</span>
+                                                                <span t-else="" class="badge bg-warning">No Respondió</span>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- General Results by Question -->
+                        <t t-if="record.get('question_results')">
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-success text-white">
+                                            <h5 class="mb-0">Resultados Generales por Pregunta</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <t t-foreach="record['question_results']" t-as="question">
+                                                <div class="mb-3">
+                                                    <h6 class="text-primary">
+                                                        <strong>Pregunta <t t-esc="question['number']"/>:</strong> 
+                                                        <span t-out="question['text']"/>
+                                                    </h6>
+                                                    <div class="ml-3">
+                                                        <t t-if="question.get('type') == 'choice'">
+                                                            <ul class="list-unstyled">
+                                                                <t t-foreach="question['answers']" t-as="answer">
+                                                                    <li>
+                                                                        <strong><span t-out="answer['option']"/>:</strong> 
+                                                                        <span t-out="answer['count']"/> respuestas 
+                                                                        (<span t-out="answer['percentage']"/>%)
+                                                                    </li>
+                                                                </t>
+                                                            </ul>
+                                                        </t>
+                                                        <t t-elif="question.get('type') == 'text'">
+                                                            <p><strong>Respuestas de texto:</strong> <span t-out="question['text_count']"/> respuestas</p>
+                                                        </t>
+                                                        <t t-elif="question.get('type') == 'numerical'">
+                                                            <p><strong>Promedio:</strong> <span t-out="question['average']"/></p>
+                                                            <p><strong>Total respuestas:</strong> <span t-out="question['count']"/></p>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Data Table -->
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-bordered table-striped">
+                                    <thead style="background-color: #34495e; color: white;">
+                                        <tr>
+                                            <t t-foreach="length" t-as="length">
+                                                <th style="border: 1px solid #ddd; padding: 12px; text-align: left; color: white; font-weight: bold;">
+                                                    <span t-out="record['header'][length]"/>
+                                                </th>
+                                            </t>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="record['data']" t-as="rec">
+                                            <tr>
+                                                <t t-foreach="length" t-as="ln">
+                                                    <td style="border: 1px solid #ddd; padding: 12px;">
+                                                        <span t-out="rec[ln]"/>
+                                                    </td>
+                                                </t>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Observations Section -->
+                        <t t-if="record.get('observations')">
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Observaciones</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p t-out="record['observations']"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Footer -->
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <small class="text-muted">
+                                    Reporte generado por el sistema interno de encuestas - Farmacias Cuxibamba
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Template for survey metrics export with group by -->
+    <template id="export_survey_metrics_group_by">
+        <t t-call="web.html_container">
+            <t t-call="web.internal_layout">
+                <div class="page">
+                    <div class="container-fluid">
+                        <!-- Header -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h2 class="text-center mb-3">Reporte de Métricas de Encuestas (Agrupado)</h2>
+                                <p class="text-center text-muted">
+                                    Generado el: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Survey Information -->
+                        <t t-if="record.get('survey_info')">
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-info text-white">
+                                            <h5 class="mb-0">Información de la Encuesta</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong>Encuesta:</strong> <span t-out="record['survey_info'].get('name', '-')"/>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <strong>Fecha de Creación:</strong> <span t-out="record['survey_info'].get('create_date', '-')"/>
+                                                </div>
+                                            </div>
+                                            <t t-if="record['survey_info'].get('department')">
+                                                <div class="row mt-2">
+                                                    <div class="col-md-6">
+                                                        <strong>Departamento:</strong> <span t-out="record['survey_info']['department']"/>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                            <t t-if="record['survey_info'].get('assigned_persons')">
+                                                <div class="row mt-2">
+                                                    <div class="col-12">
+                                                        <strong>Personas Asignadas:</strong>
+                                                        <ul class="list-unstyled mt-1">
+                                                            <t t-foreach="record['survey_info']['assigned_persons']" t-as="person">
+                                                                <li>
+                                                                    <span t-out="person['name']"/>
+                                                                    <t t-if="person.get('job')"> - <span t-out="person['job']"/></t>
+                                                                    <t t-if="person.get('department')"> (<span t-out="person['department']"/>)</t>
+                                                                </li>
+                                                            </t>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Participants Summary Table -->
+                        <t t-if="record.get('participants_summary')">
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h5 class="mb-0">Resumen de Participantes</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <table class="table table-bordered table-sm">
+                                                <thead style="background-color: #f8f9fa;">
+                                                    <tr>
+                                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Participante</th>
+                                                        <t t-if="record.get('show_department')">
+                                                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Departamento</th>
+                                                        </t>
+                                                        <t t-if="record.get('show_job')">
+                                                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Cargo</th>
+                                                        </t>
+                                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="record['participants_summary']" t-as="participant">
+                                                        <tr>
+                                                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                                                <span t-out="participant['name']"/>
+                                                            </td>
+                                                            <t t-if="record.get('show_department')">
+                                                                <td style="border: 1px solid #ddd; padding: 8px;">
+                                                                    <span t-out="participant.get('department', '-')"/>
+                                                                </td>
+                                                            </t>
+                                                            <t t-if="record.get('show_job')">
+                                                                <td style="border: 1px solid #ddd; padding: 8px;">
+                                                                    <span t-out="participant.get('job', '-')"/>
+                                                                </td>
+                                                            </t>
+                                                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                                                <span t-if="participant['responded']" class="badge bg-success">Respondió</span>
+                                                                <span t-else="" class="badge bg-warning">No Respondió</span>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Grouped Data -->
+                        <t t-foreach="record['other']" t-as="object">
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <!-- Group Header -->
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-secondary text-white">
+                                            <h5 class="mb-0">
+                                                <t t-if="object[1]">
+                                                    <t t-if="record['type'][0]=='many2one'">
+                                                        <span t-out="object[1][1]"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-out="object[1]"/>
+                                                    </t>
+                                                </t>
+                                                <t t-else="">
+                                                    <span>Sin Definir</span>
+                                                </t>
+                                                <span class="badge bg-light text-dark ms-2">
+                                                    <t t-out="object[0]['count']"/> registros
+                                                </span>
+                                            </h5>
+                                        </div>
+                                        
+                                        <!-- Group Summary -->
+                                        <t t-if="object[3]">
+                                            <div class="card-body bg-light">
+                                                <t t-foreach="object[3]" t-as="obj">
+                                                    <span class="badge bg-info me-2">
+                                                        <span t-out="record['header'][obj[1]]"/>: 
+                                                        <span t-out="obj[0]"/>
+                                                    </span>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </div>
+
+                                    <!-- Group Data Table -->
+                                    <table class="table table-bordered table-striped">
+                                        <thead style="background-color: #34495e; color: white;">
+                                            <tr>
+                                                <t t-foreach="length" t-as="le">
+                                                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left; color: white; font-weight: bold;">
+                                                        <span t-out="record['header'][le]"/>
+                                                    </th>
+                                                </t>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="object[2][0]" t-as="info">
+                                                <tr>
+                                                    <t t-foreach="length" t-as="leng">
+                                                        <td style="border: 1px solid #ddd; padding: 12px;">
+                                                            <span t-out="info[leng]"/>
+                                                        </td>
+                                                    </t>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Observations Section -->
+                        <t t-if="record.get('observations')">
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Observaciones</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p t-out="record['observations']"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Footer -->
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <small class="text-muted">
+                                    Reporte generado por el sistema interno de encuestas - Farmacias Cuxibamba
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo> 

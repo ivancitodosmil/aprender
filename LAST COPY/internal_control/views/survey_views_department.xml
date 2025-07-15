@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_survey_survey_form_inherit" model="ir.ui.view">
+        <field name="name">survey.survey.form.inherit</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_export_results"
+                        type="object"
+                        string="Exportar Resultados"
+                        class="oe_highlight"
+                        icon="fa-file-pdf-o"/>
+            </xpath>
+            <xpath expr="//form/sheet" position="inside">
+                <group>
+                    <field name="category_id" options="{'no_create': False}" string="Categoría"/>
+                    <field name="tag_ids" widget="many2many_tags" options="{'no_create': False}" string="Etiquetas"/>
+                    <field name="is_anonymous" widget="boolean_toggle" options="{'no_create': False}" string="Encuesta Anónima"/>
+                </group>
+                <group string="Vigencia">
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="survey_survey_kanban_view_inherit" model="ir.ui.view">
+        <field name="name">survey.survey.kanban.inherit</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="inside">
+                <filter name="group_by_category" string="Agrupar por Categoría" context="{'group_by': 'category_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_survey_survey_tree_inherit" model="ir.ui.view">
+        <field name="name">survey.survey.tree.inherit</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="tag_ids" string="Etiquetas"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="survey_survey_view_search_inherit" model="ir.ui.view">
+        <field name="name">survey.survey.search.inherit</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="category_id" string="Categoría"/>
+                <field name="tag_ids" string="Etiquetas"/>
+                <separator/>
+                <filter name="category" string="Categoría" context="{'group_by': 'category_id'}"/>
+                <filter name="tags" string="Etiquetas" context="{'group_by': 'tag_ids'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="survey_survey_view_search_report_filter" model="ir.ui.view">
+        <field name="name">survey.survey.search.report.filter</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <field name="category_id" string="Categoría"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_survey_form_inherit_export_pdf" model="ir.ui.view">
+        <field name="name">survey.survey.form.inherit.export.pdf</field>
+        <field name="model">survey.user_input</field>
+        <field name="inherit_id" ref="survey.survey_user_input_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_export_pdf"
+                        type="object"
+                        string="Exportar PDF"
+                        class="oe_highlight"
+                        icon="fa-file-pdf-o"/>
+                <button name="action_send_email_survey"
+                        type="object"
+                        string="Enviar Encuesta"
+                        class="oe_highlight"
+                        icon="fa-envelope"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="survey_survey_form_inherit_hide_type" model="ir.ui.view">
+        <field name="name">survey.survey.form.inherit.hide.type</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='survey_type']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="survey_survey_form_inherit_add_department" model="ir.ui.view">
+        <field name="name">survey.survey.form.inherit.add.department</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="department_id"/>
+            </xpath>
+        </field>
+    </record>
+
+  <record id="survey_user_input_view_tree_inherit_email_display" model="ir.ui.view">
+    <field name="name">survey.user_input.view.tree.email_display</field>
+    <field name="model">survey.user_input</field>
+    <field name="inherit_id" ref="survey.survey_user_input_view_tree"/>
+    <field name="arch" type="xml">
+      <field name="email" position="replace">
+        <field name="email_display" string="Correo"/>
+      </field>
+    </field>
+  </record>
+
+</odoo>

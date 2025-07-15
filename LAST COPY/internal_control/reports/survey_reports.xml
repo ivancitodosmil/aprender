@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Reporte de Items Revisados -->
+        <record id="action_report_survey_revised_items" model="ir.actions.report">
+            <field name="name">Reporte Items Revisados</field>
+            <field name="model">survey.revised.items</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">internal_control.report_survey_revised_items</field>
+            <field name="report_file">internal_control.report_survey_revised_items</field>
+            <field name="print_report_name">'Reporte Items Revisados - %s' % (object.survey_id.title)</field>
+            <field name="binding_model_id" ref="model_survey_revised_items"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Reporte de Cumplimiento -->
+        <record id="action_report_survey_compliance" model="ir.actions.report">
+            <field name="name">Reporte Cumplimiento</field>
+            <field name="model">survey.compliance</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">internal_control.report_survey_compliance</field>
+            <field name="report_file">internal_control.report_survey_compliance</field>
+            <field name="print_report_name">'Reporte Cumplimiento - %s' % (object.survey_id.title)</field>
+            <field name="binding_model_id" ref="model_survey_compliance"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Reporte de Satisfacción -->
+        <record id="action_report_survey_satisfaction" model="ir.actions.report">
+            <field name="name">Reporte Satisfacción</field>
+            <field name="model">survey.satisfaction</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">internal_control.report_survey_satisfaction</field>
+            <field name="report_file">internal_control.report_survey_satisfaction</field>
+            <field name="print_report_name">'Reporte Satisfacción - %s' % (object.survey_id.title)</field>
+            <field name="binding_model_id" ref="model_survey_satisfaction"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Reporte de Participación -->
+        <record id="action_report_survey_participation" model="ir.actions.report">
+            <field name="name">Reporte Participación</field>
+            <field name="model">survey.participation</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">internal_control.report_survey_participation</field>
+            <field name="report_file">internal_control.report_survey_participation</field>
+            <field name="print_report_name">'Reporte Participación - %s' % (object.survey_id.title)</field>
+            <field name="binding_model_id" ref="model_survey_participation"/>
+            <field name="binding_type">report</field>
+        </record>
+
+    </data>
+</odoo> 

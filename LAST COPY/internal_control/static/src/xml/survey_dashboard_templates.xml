@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="SurveyDashboardTemplate">
+        <div class="survey_dashboard">
+            <div class="container-fluid">
+                <!-- Primera sección: Resumen general -->
+                <div class="row">
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Encuestas Activas</h5>
+                                <p class="card-text display-4" t-esc="state.totalSurveys"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Respuestas Completadas</h5>
+                                <p class="card-text display-4" t-esc="state.completedSurveys"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segunda sección: Filtro y métricas detalladas -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h5 class="card-title mb-0">Métricas Detalladas</h5>
+                                    </div>
+                                    <div class="col-auto">
+                                        <select class="form-select" t-on-change="onSurveyChange">
+                                            <option value="">Todas las encuestas</option>
+                                            <t t-foreach="state.recentSurveys" t-as="survey" t-key="survey.id">
+                                                <option t-att-value="survey.id">
+                                                    <t t-esc="survey.title"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-subtitle mb-2 text-muted">Tasa de Completitud</h6>
+                                                <p class="card-text display-6">
+                                                    <t t-esc="Math.round(state.selectedSurvey.completion_rate || 0)"/>%
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-subtitle mb-2 text-muted">Tiempo Promedio</h6>
+                                                <p class="card-text display-6">
+                                                    <t t-esc="Math.round(state.selectedSurvey.avg_completion_time || 0)"/> min
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-subtitle mb-2 text-muted">Items Revisados</h6>
+                                                <p class="card-text display-6">
+                                                    <t t-esc="state.selectedSurvey.items_revisados_total || 0"/>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-subtitle mb-2 text-muted">Items Sin Novedad</h6>
+                                                <p class="card-text display-6">
+                                                    <t t-esc="state.selectedSurvey.items_sin_novedad_total || 0"/>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-subtitle mb-2 text-muted">% Cumplimiento</h6>
+                                                <p class="card-text display-6">
+                                                    <t t-esc="Math.round(state.selectedSurvey.cumplimiento_porcentaje || 0)"/>%
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tercera sección: Tabla de encuestas -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Encuestas Recientes</h5>
+                            </div>
+                            <div class="card-body">
+                                <div t-if="state.loading" class="text-center">
+                                    <i class="fa fa-spinner fa-spin"/> Cargando...
+                                </div>
+                                <div t-else="">
+                                    <!-- Tabla de encuestas -->
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Título</th>
+                                                    <th>Departamento</th>
+                                                    <th>Fecha de Creación</th>
+                                                    <th>Estado</th>
+                                                    <th>Respuestas</th>
+                                                    <th>Tasa Completitud</th>
+                                                    <th>% Cumplimiento</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="state.recentSurveys" t-as="survey" t-key="survey.id">
+                                                    <tr>
+                                                        <td><t t-esc="survey.title"/></td>
+                                                        <td><t t-esc="survey.category_id[1] or '-'"/></td>
+                                                        <td><t t-esc="survey.create_date"/></td>
+                                                        <td>
+                                                            <span t-if="survey.active" class="badge bg-success">Activo</span>
+                                                            <span t-else="" class="badge bg-danger">Inactivo</span>
+                                                        </td>
+                                                        <td><t t-esc="survey.total_responses"/></td>
+                                                        <td><t t-esc="Math.round(survey.completion_rate || 0)"/>%</td>
+                                                        <td><t t-esc="Math.round(survey.cumplimiento_porcentaje || 0)"/>%</td>
+                                                        <td>
+                                                            <button class="btn btn-primary btn-sm" 
+                                                                    t-on-click="() => this.openSurvey(survey.id)">
+                                                                Ver
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Detalle de respuestas individuales -->
+                                    <t t-if="state.selectedSurveyResponses.length > 0">
+                                        <div class="mt-4">
+                                            <h5>Respuestas Individuales - <t t-esc="state.selectedSurvey.title"/></h5>
+                                            
+                                            <!-- Filtros de fecha -->
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Fecha Desde</label>
+                                                        <input type="date" 
+                                                               class="form-control" 
+                                                               t-model="state.dateFrom"
+                                                               t-on-change="onDateFilterChange"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Fecha Hasta</label>
+                                                        <input type="date" 
+                                                               class="form-control" 
+                                                               t-model="state.dateTo"
+                                                               t-on-change="onDateFilterChange"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Participante</th>
+                                                            <th>Fecha</th>
+                                                            <th>Items Revisados</th>
+                                                            <th>Items Sin Novedad</th>
+                                                            <th>% Cumplimiento</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <t t-foreach="state.selectedSurveyResponses" t-as="response" t-key="response.id">
+                                                            <tr>
+                                                                <td><t t-esc="response.partner_name"/></td>
+                                                                <td><t t-esc="response.create_date"/></td>
+                                                                <td><t t-esc="response.items_revisados"/></td>
+                                                                <td><t t-esc="response.items_sin_novedad"/></td>
+                                                                <td><t t-esc="Math.round(response.cumplimiento_porcentaje)"/>%</td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates> 

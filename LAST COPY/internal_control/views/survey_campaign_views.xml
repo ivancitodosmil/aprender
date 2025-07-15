@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_survey_campaign_tree" model="ir.ui.view">
+        <field name="name">in.survey.campaign.tree</field>
+        <field name="model">in.survey.campaign</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="survey_id"/>
+                <field name="department_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_survey_campaign_form" model="ir.ui.view">
+        <field name="name">in.survey.campaign.form</field>
+        <field name="model">in.survey.campaign</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" type="object" string="Confirmar" class="btn-primary" invisible="state != 'draft'"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" placeholder="Ej: Campaña Q1 2024, Evaluación anual, etc."/>
+                        <field name="survey_id"/>
+                        <field name="department_id"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="job_ids" widget="many2many_tags"/>
+                        <field name="employee_ids" widget="many2many_tags"/>
+                        <field name="state"/>
+                    </group>
+                    <notebook>
+                        <page string="Asignaciones">
+                            <field name="assignment_ids">
+                                <tree editable="bottom">
+                                    <field name="employee_id"/>
+                                    <field name="state"/>
+                                    <field name="user_input_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_survey_campaign_assignment_tree" model="ir.ui.view">
+        <field name="name">in.survey.campaign.assignment.tree</field>
+        <field name="model">in.survey.campaign.assignment</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="campaign_id"/>
+                <field name="employee_id"/>
+                <field name="state"/>
+                <field name="user_input_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_survey_campaign_assignment_form" model="ir.ui.view">
+        <field name="name">in.survey.campaign.assignment.form</field>
+        <field name="model">in.survey.campaign.assignment</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_open_survey" type="object" string="Responder encuesta" class="btn-primary" invisible="state != 'pending'"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="campaign_id"/>
+                        <field name="employee_id"/>
+                        <field name="state"/>
+                        <field name="user_input_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para acceder directamente a las encuestas nativas -->
+    <record id="action_survey_surveys_native" model="ir.actions.act_window">
+        <field name="name">Crear Encuesta</field>
+        <field name="res_model">survey.survey</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Menú para empleados ver sus asignaciones -->
+    <record id="action_my_survey_assignments" model="ir.actions.act_window">
+        <field name="name">Mis Encuestas Asignadas</field>
+        <field name="res_model">in.survey.campaign.assignment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_survey_campaign_assignment_tree"/>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+        <field name="context">{'search_default_my_assignments': 1}</field>
+    </record>
+
+</odoo>

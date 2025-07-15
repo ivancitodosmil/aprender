@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action para programar encuestas -->
+    <record id="menu_surveys_dates" model="ir.actions.act_window">
+        <field name="name">Programar encuesta</field>
+        <field name="res_model">survey.dates</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+    <!-- Action para campañas de encuestas -->
+    <record id="action_survey_campaign" model="ir.actions.act_window">
+        <field name="name">Programar actividad</field>
+        <field name="res_model">in.survey.campaign</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Action para participaciones nativas de Odoo -->
+    <record id="action_survey_participations_native" model="ir.actions.act_window">
+        <field name="name">Participaciones</field>
+        <field name="res_model">survey.user_input</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Action para preguntas y respuestas -->
+    <record id="action_survey_questions_answers" model="ir.actions.act_window">
+        <field name="name">Preguntas y respuestas</field>
+        <field name="res_model">survey.user_input</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Submenús dentro del menú nativo de Encuestas -->
+    <menuitem id="menu_survey_surveys_native"
+              name="Crear Encuesta"
+              action="action_survey_surveys_native"
+              parent="survey.menu_survey_form"
+              sequence="1"/>
+
+    <menuitem id="menu_survey_participations_native"
+              name="Participaciones"
+              action="action_survey_participations_native"
+              parent="survey.menu_survey_form"
+              sequence="2"/>
+
+    <menuitem id="survey_dates_menu_inherit"
+              name="Programar encuesta"
+              parent="survey.menu_survey_form"
+              action="menu_surveys_dates"
+              sequence="3"/>
+
+    <menuitem id="menu_survey_campaign"
+              name="Programar actividad"
+              parent="survey.menu_survey_form"
+              action="action_survey_campaign"
+              sequence="4"/>
+
+    <!-- <menuitem id="menu_survey_questions_answers"
+              name="Preguntas y respuestas"
+              parent="survey.menu_survey_form"
+              action="action_survey_questions_answers"
+              sequence="5"/> -->
+
+    <!-- Menú para empleados ver sus asignaciones -->
+    <menuitem id="menu_my_survey_assignments"
+              name="Mis Encuestas Asignadas"
+              parent="survey.menu_survey_form"
+              action="action_my_survey_assignments"
+              sequence="6"
+              groups="internal_control.internal_control_employee"/>
+
+    <!-- Ocultar menú nativo de preguntas y respuestas de Odoo -->
+    <menuitem id="survey_menu_questions" groups="base.group_no_one"/>
+    <menuitem id="survey.menu_survey_user_input" groups="base.group_no_one"/>
+    <menuitem id="menu_survey_user_input" groups="base.group_no_one"/>
+    <menuitem id="survey.menu_survey_user_input_form" groups="base.group_no_one"/>
+
+</odoo>

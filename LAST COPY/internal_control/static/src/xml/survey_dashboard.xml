@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="SurveyDashboard">
+        <div class="survey_dashboard">
+            <!-- Filtros y controles -->
+            <div class="dashboard_controls mb-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Seleccionar encuesta</label>
+                        <select class="form-select" t-on-change="onSurveySelect">
+                            <option value="">Todas las encuestas</option>
+                            <t t-foreach="state.surveys" t-as="survey" t-key="survey.id">
+                                <option t-att-value="survey.id" t-esc="survey.title"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn btn-outline-primary" t-on-click="toggleTools">
+                            <i class="fa fa-tools"></i>
+                            <t t-if="state.showTools">Ocultar</t>
+                            <t t-else="">Mostrar</t>
+                            Herramientas
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Herramientas -->
+            <t t-if="state.showTools">
+                <div class="tools_section mb-4">
+                    <div class="card" style="background:rgba(0,123,255,0.04); border:none; max-width:900px; margin:auto;">
+                        <div class="card-header" style="background:transparent; border-bottom:none; padding-bottom:0.5rem;">
+                            <h5 class="mb-0" style="font-size:1.1rem;">
+                                <i class="fa fa-wrench" style="color:#6c757d;"></i>
+                                Exportar e Importar Estructura
+                            </h5>
+                        </div>
+                        <div class="card-body" style="padding:1.5rem 1rem;">
+                            <div class="row g-2 align-items-stretch">
+                                <!-- Exportar Estructura -->
+                                <div class="col-md-6 d-flex">
+                                    <div class="flex-fill p-3 mb-2" style="background:rgba(0,123,255,0.07); border-radius:0; box-shadow:0 1px 4px rgba(0,0,0,0.02); min-height:220px; display:flex; flex-direction:column; justify-content:space-between;">
+                                        <h6 class="mb-2" style="font-weight:600; font-size:1rem;"><i class="fa fa-solid fa-file-export" style="color:#007bff;"></i> Exportar Estructura</h6>
+                                        <p class="text-muted small mb-2">
+                                            Exporta la estructura de una encuesta como archivo JSON
+                                        </p>
+                                        <div class="mb-2">
+                                            <label class="form-label">Seleccionar encuesta:</label>
+                                            <select class="form-select" t-on-change="onExportSurveySelect">
+                                                <option value="">Seleccione una encuesta</option>
+                                                <t t-foreach="state.surveys" t-as="survey" t-key="survey.id">
+                                                    <option t-att-value="survey.id" t-esc="survey.title"/>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        <button class="btn o_primary" 
+                                                t-on-click="exportSurveyStructure"
+                                                t-att-disabled="!state.selectedSurveyForExport or state.loading">
+                                            <i class="fa fa-solid fa-file-arrow-down"></i>
+                                            <t t-if="state.loading">Exportando...</t>
+                                            <t t-else="">Exportar Estructura</t>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Importar Estructura -->
+                                <div class="col-md-6 d-flex">
+                                    <div class="flex-fill p-3 mb-2" style="background:rgba(0,123,255,0.07); border-radius:0; box-shadow:0 1px 4px rgba(0,0,0,0.02); min-height:220px; display:flex; flex-direction:column; justify-content:space-between;">
+                                        <h6 class="mb-2" style="font-weight:600; font-size:1rem;"><i class="fa fa-solid fa-file-import" style="color:#007bff;"></i> Importar Estructura</h6>
+                                        <p class="text-muted small mb-2">
+                                            Importa la estructura de una encuesta desde un archivo JSON
+                                        </p>
+                                        <div style="flex:1;"></div>
+                                        <button class="btn o_primary" t-on-click="openImportWizard">
+                                            <i class="fa fa-solid fa-file-arrow-up"></i>
+                                            Importar Estructura
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Vista de resumen -->
+            <t t-if="state.currentView === 'summary'">
+                <div class="summary_view">
+                    <h3 class="mb-4">Resumen General de Encuestas</h3>
+                    
+                    <!-- Tarjetas de resumen -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Encuestas</h5>
+                                    <p class="card-text h3" t-esc="formatNumber(state.summaryData.total_surveys)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Respuestas</h5>
+                                    <p class="card-text h3" t-esc="formatNumber(state.summaryData.total_responses)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Tasa de Respuesta</h5>
+                                    <p class="card-text h3" t-esc="formatPercentage(state.summaryData.response_rate)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total actividades</h5>
+                                    <p class="card-text h3" t-esc="formatNumber(state.summaryData.total_campaigns)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de distribución por categoría -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Distribución por Categoría</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Categoría</th>
+                                            <th>Total Respuestas</th>
+                                            <th>Porcentaje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="Object.entries(state.summaryData.category_distribution)" t-as="category" t-key="category[0]">
+                                            <tr>
+                                                <td>
+                                                    <t t-set="categoryInfo" t-value="getCategoryDisplayInfo(category[0])"/>
+                                                    <i t-att-class="categoryInfo.icon" style="margin-right: 8px; color: #007bff;"></i>
+                                                    <span t-esc="categoryInfo.name"/>
+                                                </td>
+                                                <td t-esc="formatNumber(category[1].total_responses)"/>
+                                                <td t-esc="formatPercentage(category[1].percentage)"/>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección Campañas -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Campañas</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Campaña</th>
+                                            <th>Total Esperados</th>
+                                            <th>Total Respuestas</th>
+                                            <th>% Cumplimiento</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="state.summaryData.campaign_stats" t-as="campania" t-key="campania.id">
+                                            <tr>
+                                                <td t-esc="campania.name"/>
+                                                <td t-esc="formatNumber(campania.total_esperados)"/>
+                                                <td t-esc="formatNumber(campania.total_respuestas)"/>
+                                                <td t-esc="formatPercentage(campania.porcentaje_cumplimiento / 100)"/>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Vista detallada -->
+            <t t-if="state.currentView === 'detailed'">
+                <div class="detailed_view">
+                    <h3 class="mb-4" t-esc="state.selectedSurvey.title"/>
+                    
+                    <!-- Estadísticas generales de la encuesta -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Respuestas</h5>
+                                    <p class="card-text h3" t-esc="formatNumber(state.detailedData.metrics.total_responses)"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Métricas para revision_items -->
+                        <t t-if="state.selectedSurvey.category === 'revision_items'">
+                            <div class="col-md-3">
+                                <div class="card revision-metric-total">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Items Revisados</h5>
+                                        <p class="card-text h3" t-esc="formatNumber(state.detailedData.metrics.total_items_revisados)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card revision-metric-sin-novedad">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Items Sin Novedad</h5>
+                                        <p class="card-text h3" t-esc="formatNumber(state.detailedData.metrics.total_items_sin_novedad)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card revision-metric-cumplimiento">
+                                    <div class="card-body">
+                                        <h5 class="card-title">% Cumplimiento</h5>
+                                        <p class="card-text h3" t-esc="formatPercentage(state.detailedData.metrics.porcentaje_cumplimiento / 100)"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Métricas para compliance -->
+                        <t t-if="state.selectedSurvey.category === 'compliance'">
+                            <div class="col-md-3">
+                                <div class="card compliance-metric-cumple">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Cumple</h5>
+                                        <p class="card-text h3">
+                                            <span t-esc="formatNumber(state.detailedData.metrics.total_cumple)"/>
+                                            <br/>
+                                            <small class="text-muted" t-esc="formatPercentage(state.detailedData.metrics.porcentaje_cumple / 100)"/>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card compliance-metric-no-cumple">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total No Cumple</h5>
+                                        <p class="card-text h3">
+                                            <span t-esc="formatNumber(state.detailedData.metrics.total_no_cumple)"/>
+                                            <br/>
+                                            <small class="text-muted" t-esc="formatPercentage(state.detailedData.metrics.porcentaje_no_cumple / 100)"/>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card compliance-metric-na">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total N/A</h5>
+                                        <p class="card-text h3">
+                                            <span t-esc="formatNumber(state.detailedData.metrics.total_na)"/>
+                                            <br/>
+                                            <small class="text-muted" t-esc="formatPercentage(state.detailedData.metrics.porcentaje_na / 100)"/>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Métricas para satisfaction -->
+                        <t t-if="state.selectedSurvey.category === 'satisfaction'">
+                            <div class="col-md-3">
+                                <div class="card satisfaction-metric-promedio">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Promedio Satisfacción</h5>
+                                        <p class="card-text h3" t-esc="formatNumber(state.detailedData.metrics.promedio_satisfaccion)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card satisfaction-metric-porcentaje">
+                                    <div class="card-body">
+                                        <h5 class="card-title">% Promedio Satisfacción</h5>
+                                        <p class="card-text h3" t-esc="formatPercentage(state.detailedData.metrics.promedio_porcentaje_satisfaccion / 100)"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                        <!-- Métricas para participation -->
+                        <t t-if="state.selectedSurvey.category === 'participation'">
+                            <div class="col-md-3">
+                                <div class="card participation-metric-si">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Sí</h5>
+                                        <p class="card-text h3" t-esc="formatNumber(state.detailedData.metrics.total_si)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card participation-metric-no">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total No</h5>
+                                        <p class="card-text h3" t-esc="formatNumber(state.detailedData.metrics.total_no)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card participation-metric-no-respondieron">
+                                    <div class="card-body">
+                                        <h5 class="card-title">No Respondieron</h5>
+                                        <p class="card-text h3" t-esc="formatNumber(state.detailedData.metrics.total_no_respondieron)"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card participation-metric-porcentaje">
+                                    <div class="card-body">
+                                        <h5 class="card-title">% Promedio Participación</h5>
+                                        <p class="card-text h3" t-esc="formatPercentage(state.detailedData.metrics.promedio_participacion / 100)"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Respuestas Individuales</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Respondente</th>
+                                            <th>Fecha</th>
+
+                                            <!-- Condicional por tipo de categoría -->
+                                            <t t-if="state.selectedSurvey.category === 'revision_items'">
+                                                <th>Items Revisados</th>
+                                                <th>Items Sin Novedad</th>
+                                                <th>% Cumplimiento</th>
+                                            </t>
+
+                                            <t t-if="state.selectedSurvey.category === 'compliance'">
+                                                <th>Cumple</th>
+                                                <th>No Cumple</th>
+                                                <th>N/A</th>
+                                                <th>% Cumple</th>
+                                                <th>% No Cumple</th>
+                                            </t>
+
+                                            <t t-if="state.selectedSurvey.category === 'satisfaction'">
+                                                <th>Satisfacción</th>
+                                                <th>% Satisfacción</th>
+                                            </t>
+                                            <t t-if="state.selectedSurvey.category === 'participation'">
+                                                <th>Sí</th>
+                                                <th>No</th>
+                                                <th>No Respondieron</th>
+                                                <th>% Participación</th>
+                                            </t>
+
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="state.detailedData.responses" t-as="response" t-key="response.id">
+                                            <tr>
+                                                <td t-esc="response.respondent_name"/>
+                                                <td t-esc="response.date"/>
+
+                                                <!-- Datos para 'revision_items' -->
+                                                <t t-if="state.selectedSurvey.category === 'revision_items'">
+                                                    <td t-esc="formatNumber(response.total_metrics.total_items_revisados)"/>
+                                                    <td t-esc="formatNumber(response.total_metrics.total_items_sin_novedad)"/>
+                                                    <td>
+                                                        <t t-set="porcentaje" t-value="response.total_metrics.porcentaje_cumplimiento"/>
+                                                        <t t-esc="formatPercentage(porcentaje / 100)"/>
+                                                    </td>
+                                                </t>
+
+                                                <!-- Datos para 'compliance' -->
+                                                <t t-if="state.selectedSurvey.category === 'compliance'">
+                                                    <td>
+                                                        <span class="badge bg-success" t-esc="response.total_metrics.total_cumple"/>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-danger" t-esc="response.total_metrics.total_no_cumple"/>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-secondary" t-esc="response.total_metrics.total_na"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-set="porcentaje" t-value="response.total_metrics.porcentaje_cumple"/>
+                                                        <t t-esc="formatPercentage(porcentaje / 100)"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-set="porcentaje" t-value="response.total_metrics.porcentaje_no_cumple"/>
+                                                        <t t-esc="formatPercentage(porcentaje / 100)"/>
+                                                    </td>
+                                                </t>
+
+                                                <!-- Datos para 'satisfaction' -->
+                                                <t t-if="state.selectedSurvey.category === 'satisfaction'">
+                                                    <td t-esc="formatNumber(response.total_metrics.promedio_satisfaccion)"/>
+                                                    <td t-esc="formatPercentage(response.total_metrics.promedio_porcentaje_satisfaccion / 100)"/>
+                                                </t>
+                                                <!-- Datos para 'participation' -->
+                                                <t t-if="state.selectedSurvey.category === 'participation'">
+                                                    <td t-esc="formatNumber(response.total_metrics.total_si)"/>
+                                                    <td t-esc="formatNumber(response.total_metrics.total_no)"/>
+                                                    <td t-esc="formatNumber(response.total_metrics.total_no_respondieron)"/>
+                                                    <td t-esc="formatPercentage(response.total_metrics.promedio_participacion / 100)"/>
+                                                </t>
+
+                                                <td>
+                                                    <button class="btn btn-sm btn-primary" t-on-click="(ev) => this.onResponseSelect(response.id)">
+                                                        Ver Detalle
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Detalle de respuesta seleccionada -->
+                    <t t-if="state.selectedResponse">
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Detalle de Respuesta</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Tabla para categoría revision_items -->
+                                <t t-if="state.selectedResponse.category === 'revision_items'">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sección</th>
+                                                    <th>Items Revisados</th>
+                                                    <th>Items Sin Novedad</th>
+                                                    <th>% Cumplimiento</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="Object.entries(state.selectedResponse.metrics)" t-as="section" t-key="section[0]">
+                                                    <tr>
+                                                        <td t-esc="section[1].name"/>
+                                                        <td>
+                                                            <t t-if="section[1].total_items_revisados !== undefined">
+                                                                <t t-esc="formatNumber(section[1].total_items_revisados)"/>
+                                                            </t>
+                                                            <t t-else="">0</t>
+                                                        </td>
+                                                        <td>
+                                                            <t t-if="section[1].total_items_sin_novedad !== undefined">
+                                                                <t t-esc="formatNumber(section[1].total_items_sin_novedad)"/>
+                                                            </t>
+                                                            <t t-else="">0</t>
+                                                        </td>
+                                                        <td>
+                                                            <t t-if="section[1].porcentaje_cumplimiento !== undefined">
+                                                                <t t-set="porcentaje" t-value="section[1].porcentaje_cumplimiento"/>
+                                                                <t t-esc="formatPercentage(porcentaje / 100)"/>
+                                                            </t>
+                                                            <t t-else="">0%</t>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <tr class="table-primary">
+                                                    <td><strong>Total</strong></td>
+                                                    <td>
+                                                        <strong>
+                                                            <t t-if="state.selectedResponse.total_metrics.total_items_revisados !== undefined">
+                                                                <t t-esc="formatNumber(state.selectedResponse.total_metrics.total_items_revisados)"/>
+                                                            </t>
+                                                            <t t-else="">0</t>
+                                                        </strong>
+                                                    </td>
+                                                    <td>
+                                                        <strong>
+                                                            <t t-if="state.selectedResponse.total_metrics.total_items_sin_novedad !== undefined">
+                                                                <t t-esc="formatNumber(state.selectedResponse.total_metrics.total_items_sin_novedad)"/>
+                                                            </t>
+                                                            <t t-else="">0</t>
+                                                        </strong>
+                                                    </td>
+                                                    <td>
+                                                        <strong>
+                                                            <t t-if="state.selectedResponse.total_metrics.porcentaje_cumplimiento !== undefined">
+                                                                <t t-set="porcentaje" t-value="state.selectedResponse.total_metrics.porcentaje_cumplimiento"/>
+                                                                <t t-esc="formatPercentage(porcentaje / 100)"/>
+                                                            </t>
+                                                            <t t-else="">0%</t>
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </t>
+
+                                <!-- Tabla para categoría compliance -->
+                                <t t-if="state.selectedResponse.category === 'compliance'">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sección</th>
+                                                    <th>Estado</th>
+                                                    <th>Observaciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="Object.entries(state.selectedResponse.metrics)" t-as="section" t-key="section[0]">
+                                                    <tr>
+                                                        <td t-esc="section[1].name"/>
+                                                        <td>
+                                                            <span t-att-class="{
+                                                                'badge bg-success': section[1].compliance_status === 'cumple',
+                                                                'badge bg-danger': section[1].compliance_status === 'no_cumple',
+                                                                'badge bg-secondary': section[1].compliance_status === 'na'
+                                                            }">
+                                                                <t t-esc="section[1].compliance_status"/>
+                                                            </span>
+                                                        </td>
+                                                        <td t-esc="section[1].observations"/>
+                                                    </tr>
+                                                </t>
+                                                <tr class="table-primary">
+                                                    <td><strong>Total</strong></td>
+                                                    <td colspan="2">
+                                                        <strong>
+                                                            <span class="badge bg-success" style="margin-right: 10px;">Cumple: <t t-esc="state.selectedResponse.total_metrics.total_cumple"/></span>
+                                                            <span class="badge bg-danger" style="margin-right: 10px;">No Cumple: <t t-esc="state.selectedResponse.total_metrics.total_no_cumple"/></span>
+                                                            <span class="badge bg-secondary">N/A: <t t-esc="state.selectedResponse.total_metrics.total_na"/></span>
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </t>
+
+                                <!-- Tabla para categoría satisfaction -->
+                                <t t-if="state.selectedResponse.category === 'satisfaction'">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sección</th>
+                                                    <th>Satisfacción</th>
+                                                    <th>% Satisfacción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="Object.entries(state.selectedResponse.metrics)" t-as="section" t-key="section[0]">
+                                                    <tr>
+                                                        <td t-esc="section[1].name"/>
+                                                        <td>
+                                                            <t t-if="section[1].satisfaccion !== undefined">
+                                                                <t t-esc="formatNumber(section[1].satisfaccion)"/>
+                                                            </t>
+                                                            <t t-else="">0</t>
+                                                        </td>
+                                                        <td>
+                                                            <t t-if="section[1].porcentaje_satisfaccion !== undefined">
+                                                                <t t-set="porcentaje" t-value="section[1].porcentaje_satisfaccion"/>
+                                                                <t t-esc="formatPercentage(porcentaje / 100)"/>
+                                                            </t>
+                                                            <t t-else="">0%</t>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </t>
+
+                                <!-- Tabla para categoría participation -->
+                                <t t-if="state.selectedResponse.category === 'participation'">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sección</th>
+                                                    <th>Sí</th>
+                                                    <th>No</th>
+                                                    <th>No Respondieron</th>
+                                                    <th>% Participación</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="Object.entries(state.selectedResponse.metrics)" t-as="section" t-key="section[0]">
+                                                    <tr>
+                                                        <td t-esc="section[1].name"/>
+                                                        <td>
+                                                            <t t-if="section[1].respuestas_si !== undefined">
+                                                                <t t-esc="formatNumber(section[1].respuestas_si)"/>
+                                                            </t>
+                                                            <t t-else="">0</t>
+                                                        </td>
+                                                        <td>
+                                                            <t t-if="section[1].respuestas_no !== undefined">
+                                                                <t t-esc="formatNumber(section[1].respuestas_no)"/>
+                                                            </t>
+                                                            <t t-else="">0</t>
+                                                        </td>
+                                                        <td>
+                                                            <t t-if="section[1].no_respondieron !== undefined">
+                                                                <t t-esc="formatNumber(section[1].no_respondieron)"/>
+                                                            </t>
+                                                            <t t-else="">0</t>
+                                                        </td>
+                                                        <td>
+                                                            <t t-if="section[1].porcentaje_participacion !== undefined">
+                                                                <t t-set="porcentaje" t-value="section[1].porcentaje_participacion"/>
+                                                                <t t-esc="formatPercentage(porcentaje / 100)"/>
+                                                            </t>
+                                                            <t t-else="">0%</t>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- Indicador de carga -->
+            <t t-if="state.loading">
+                <div class="loading-overlay">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Modal para Importar Estructura -->
+            <t t-if="state.showImportWizard">
+                <div class="modal fade show" style="display: block;" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fa fa-upload"></i>
+                                    Importar Estructura de Encuesta
+                                </h5>
+                                <button type="button" class="btn-close" t-on-click="closeImportWizard"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Archivo JSON</label>
+                                    <input type="file" 
+                                           class="form-control" 
+                                           accept=".json"
+                                           t-on-change="(ev) => this.handleFileSelect(ev)"/>
+                                    <div class="form-text">
+                                        Seleccione un archivo JSON con la estructura de una encuesta
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" 
+                                        class="btn btn-secondary" 
+                                        t-on-click="closeImportWizard">
+                                    Cancelar
+                                </button>
+                                <button type="button" 
+                                        class="btn btn-success" 
+                                        t-on-click="(ev) => this.handleImportSubmit(ev)"
+                                        t-att-disabled="!state.selectedFile or state.loading">
+                                    <i class="fa fa-upload"></i>
+                                    <t t-if="state.loading">Importando...</t>
+                                    <t t-else="">Importar</t>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-backdrop fade show"></div>
+            </t>
+        </div>
+    </t>
+</templates> 

@@ -1,0 +1,766 @@
+.survey_dashboard {
+    padding: 20px;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.dashboard_controls {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.card-title {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.card-text.h3 {
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.progress {
+    height: 20px;
+    margin-bottom: 0;
+}
+
+.progress-bar {
+    font-size: 0.8rem;
+    line-height: 20px;
+    color: white;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    border-radius: 4px;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Estilos para las tablas responsivas */
+.table-responsive {
+    margin-bottom: 0;
+}
+
+/* Estilos para los filtros */
+.form-label {
+    font-weight: 500;
+    color: #666;
+}
+
+.form-control, .form-select {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+/* Estilos para las tarjetas de resumen */
+.summary_view .card {
+    margin-bottom: 20px;
+}
+
+.summary_view {
+    /* Sin scroll propio, usa el del contenedor padre */
+}
+
+.summary_view .card-body {
+    padding: 1.25rem;
+}
+
+/* Estilos para la vista detallada */
+.detailed_view .card {
+    margin-bottom: 20px;
+}
+
+.detailed_view {
+    /* Sin scroll propio, usa el del contenedor padre */
+}
+
+.detailed_view .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+}
+
+/* Estilos para las barras de progreso en la distribución de respuestas */
+.progress {
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+/* Estilos para los encabezados de sección */
+h3.mb-4 {
+    color: #2c3e50;
+    font-weight: 600;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Estilos para métricas de compliance */
+.compliance-metric-cumple {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.compliance-metric-cumple .card-body {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+}
+
+.compliance-metric-no-cumple {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.compliance-metric-no-cumple .card-body {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+}
+
+.compliance-metric-na {
+    background-color: #e2e3e5 !important;
+    color: #383d41 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.compliance-metric-na .card-body {
+    background-color: #e2e3e5 !important;
+    color: #383d41 !important;
+}
+
+/* Badges de compliance en tablas */
+.badge.bg-success {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+}
+
+.badge.bg-danger {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+}
+
+.badge.bg-secondary {
+    background-color: #e2e3e5 !important;
+    color: #383d41 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+}
+
+/* Estilos adicionales para las tarjetas de métricas */
+.compliance-metric-cumple .card-body,
+.compliance-metric-no-cumple .card-body,
+.compliance-metric-na .card-body {
+    padding: 1.5rem;
+}
+
+.compliance-metric-cumple .card-title,
+.compliance-metric-no-cumple .card-title,
+.compliance-metric-na .card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.compliance-metric-cumple .card-text,
+.compliance-metric-no-cumple .card-text,
+.compliance-metric-na .card-text {
+    margin-bottom: 0;
+}
+
+.compliance-metric-cumple .card-text .h3,
+.compliance-metric-no-cumple .card-text .h3,
+.compliance-metric-na .card-text .h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.compliance-metric-cumple .text-muted,
+.compliance-metric-no-cumple .text-muted,
+.compliance-metric-na .text-muted {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Asegurar que los colores se apliquen correctamente */
+.compliance-metric-cumple .card-title,
+.compliance-metric-cumple .card-text,
+.compliance-metric-cumple .card-text .h3,
+.compliance-metric-cumple .text-muted {
+    color: #155724 !important;
+}
+
+.compliance-metric-no-cumple .card-title,
+.compliance-metric-no-cumple .card-text,
+.compliance-metric-no-cumple .card-text .h3,
+.compliance-metric-no-cumple .text-muted {
+    color: #721c24 !important;
+}
+
+.compliance-metric-na .card-title,
+.compliance-metric-na .card-text,
+.compliance-metric-na .card-text .h3,
+.compliance-metric-na .text-muted {
+    color: #383d41 !important;
+}
+
+/* ===== ESTILOS PARA MÉTRICAS DE REVISION_ITEMS ===== */
+.revision-metric-total {
+    background-color: #e3f2fd !important;
+    color: #1565c0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.revision-metric-total .card-body {
+    background-color: #e3f2fd !important;
+    color: #1565c0 !important;
+}
+
+.revision-metric-sin-novedad {
+    background-color: #e8f5e8 !important;
+    color: #2e7d32 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.revision-metric-sin-novedad .card-body {
+    background-color: #e8f5e8 !important;
+    color: #2e7d32 !important;
+}
+
+.revision-metric-cumplimiento {
+    background-color: #fff3e0 !important;
+    color: #ef6c00 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.revision-metric-cumplimiento .card-body {
+    background-color: #fff3e0 !important;
+    color: #ef6c00 !important;
+}
+
+/* ===== ESTILOS PARA MÉTRICAS DE SATISFACTION ===== */
+.satisfaction-metric-promedio {
+    background-color: #f3e5f5 !important;
+    color: #7b1fa2 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.satisfaction-metric-promedio .card-body {
+    background-color: #f3e5f5 !important;
+    color: #7b1fa2 !important;
+}
+
+.satisfaction-metric-porcentaje {
+    background-color: #e1f5fe !important;
+    color: #0277bd !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.satisfaction-metric-porcentaje .card-body {
+    background-color: #e1f5fe !important;
+    color: #0277bd !important;
+}
+
+/* ===== ESTILOS PARA MÉTRICAS DE PARTICIPATION ===== */
+.participation-metric-si {
+    background-color: #e8f5e8 !important;
+    color: #2e7d32 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.participation-metric-si .card-body {
+    background-color: #e8f5e8 !important;
+    color: #2e7d32 !important;
+}
+
+.participation-metric-no {
+    background-color: #ffebee !important;
+    color: #c62828 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.participation-metric-no .card-body {
+    background-color: #ffebee !important;
+    color: #c62828 !important;
+}
+
+.participation-metric-no-respondieron {
+    background-color: #fafafa !important;
+    color: #424242 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.participation-metric-no-respondieron .card-body {
+    background-color: #fafafa !important;
+    color: #424242 !important;
+}
+
+.participation-metric-porcentaje {
+    background-color: #fff8e1 !important;
+    color: #f57f17 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.participation-metric-porcentaje .card-body {
+    background-color: #fff8e1 !important;
+    color: #f57f17 !important;
+}
+
+/* Asegurar que los colores se apliquen correctamente para todas las métricas */
+.revision-metric-total .card-title,
+.revision-metric-total .card-text,
+.revision-metric-total .card-text .h3 {
+    color: #1565c0 !important;
+}
+
+.revision-metric-sin-novedad .card-title,
+.revision-metric-sin-novedad .card-text,
+.revision-metric-sin-novedad .card-text .h3 {
+    color: #2e7d32 !important;
+}
+
+.revision-metric-cumplimiento .card-title,
+.revision-metric-cumplimiento .card-text,
+.revision-metric-cumplimiento .card-text .h3 {
+    color: #ef6c00 !important;
+}
+
+.satisfaction-metric-promedio .card-title,
+.satisfaction-metric-promedio .card-text,
+.satisfaction-metric-promedio .card-text .h3 {
+    color: #7b1fa2 !important;
+}
+
+.satisfaction-metric-porcentaje .card-title,
+.satisfaction-metric-porcentaje .card-text,
+.satisfaction-metric-porcentaje .card-text .h3 {
+    color: #0277bd !important;
+}
+
+.participation-metric-si .card-title,
+.participation-metric-si .card-text,
+.participation-metric-si .card-text .h3 {
+    color: #2e7d32 !important;
+}
+
+.participation-metric-no .card-title,
+.participation-metric-no .card-text,
+.participation-metric-no .card-text .h3 {
+    color: #c62828 !important;
+}
+
+.participation-metric-no-respondieron .card-title,
+.participation-metric-no-respondieron .card-text,
+.participation-metric-no-respondieron .card-text .h3 {
+    color: #424242 !important;
+}
+
+.participation-metric-porcentaje .card-title,
+.participation-metric-porcentaje .card-text,
+.participation-metric-porcentaje .card-text .h3 {
+    color: #f57f17 !important;
+}
+
+/* Estilos para los mensajes de error y éxito */
+.alert {
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+/* Estilos para los botones */
+.btn {
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Estilos para los inputs de fecha */
+input[type="date"] {
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+/* Estilos para el selector de encuestas */
+select.form-select {
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* ===== ESTILOS PROFESIONALES DEL DASHBOARD DE ENCUESTAS ===== */
+
+/* Sección de herramientas */
+.survey_dashboard .tools_section {
+    margin-bottom: 30px;
+}
+
+.survey_dashboard .tools_section .card {
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-radius: 0;
+    background: #ffffff;
+}
+
+.survey_dashboard .tools_section .card-header {
+    background: #f8f9fa;
+    color: #495057;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+}
+
+.survey_dashboard .tools_section .card-header h5 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #495057;
+}
+
+.survey_dashboard .tools_section .card-header i {
+    margin-right: 8px;
+    color: #6c757d;
+}
+
+/* Tarjetas de herramientas individuales */
+.survey_dashboard .tools_section .card .card {
+    transition: border-color 0.2s ease;
+    margin-bottom: 0;
+    border: 1px solid #e9ecef;
+    border-radius: 0;
+    background: #ffffff;
+}
+
+.survey_dashboard .tools_section .card .card:hover {
+    border-color: #495057;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.survey_dashboard .tools_section .card .card-header {
+    border-radius: 0;
+    font-weight: 600;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    color: #495057;
+}
+
+.survey_dashboard .tools_section .card .card-header i {
+    margin-right: 6px;
+    color: #6c757d;
+}
+
+.survey_dashboard .tools_section .card .card-body {
+    padding: 1.25rem;
+    background: #ffffff;
+}
+
+/* Modal específico del dashboard */
+.survey_dashboard .modal {
+    z-index: 1050;
+}
+
+.survey_dashboard .modal-backdrop {
+    z-index: 1040;
+    background: rgba(0,0,0,0.5);
+}
+
+.survey_dashboard .modal-content {
+    border: 1px solid #e9ecef;
+    border-radius: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    background: #ffffff;
+}
+
+.survey_dashboard .modal-header {
+    background: #f8f9fa;
+    color: #495057;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 0;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+}
+
+.survey_dashboard .modal-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #495057;
+}
+
+.survey_dashboard .modal-title i {
+    margin-right: 8px;
+    color: #6c757d;
+}
+
+.survey_dashboard .btn-close {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.survey_dashboard .btn-close:hover {
+    opacity: 1;
+}
+
+.survey_dashboard .modal-body {
+    padding: 1.5rem;
+    background: #ffffff;
+}
+
+.survey_dashboard .modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+}
+
+/* Botones específicos del dashboard */
+.survey_dashboard .btn-outline-primary {
+    border: 1px solid #495057;
+    color: #495057;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.survey_dashboard .btn-outline-primary:hover {
+    background: #495057;
+    border-color: #495057;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Botones de acción profesionales */
+.survey_dashboard .btn-primary {
+    background: #495057;
+    border: 1px solid #495057;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0;
+    color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.survey_dashboard .btn-primary:hover {
+    background: #343a40;
+    border-color: #343a40;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.survey_dashboard .btn-success {
+    background: #28a745;
+    border: 1px solid #28a745;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0;
+    color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.survey_dashboard .btn-success:hover {
+    background: #218838;
+    border-color: #218838;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.survey_dashboard .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Input de archivo profesional */
+.survey_dashboard input[type="file"] {
+    padding: 0.75rem;
+    border: 1px solid #e9ecef;
+    border-radius: 0;
+    background: #ffffff;
+    transition: border-color 0.2s ease;
+    cursor: pointer;
+}
+
+.survey_dashboard input[type="file"]:hover {
+    border-color: #495057;
+}
+
+.survey_dashboard input[type="file"]:focus {
+    border-color: #495057;
+    box-shadow: 0 0 0 0.1rem rgba(73, 80, 87, 0.25);
+    outline: none;
+}
+
+/* Texto de ayuda profesional */
+.survey_dashboard .form-text {
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-style: normal;
+}
+
+/* Efectos de hover sutiles */
+.survey_dashboard .tools_section .card .card-body {
+    transition: background-color 0.2s ease;
+}
+
+.survey_dashboard .tools_section .card .card:hover .card-body {
+    background: #f8f9fa;
+}
+
+/* Transiciones suaves */
+.survey_dashboard * {
+    transition: all 0.2s ease;
+}
+
+/* Scrollbar personalizado para el dashboard */
+.survey_dashboard::-webkit-scrollbar {
+    width: 12px;
+}
+
+.survey_dashboard::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.survey_dashboard::-webkit-scrollbar-thumb {
+    background: #6c757d;
+    border-radius: 6px;
+    border: 1px solid #f8f9fa;
+    transition: background 0.2s ease;
+}
+
+.survey_dashboard::-webkit-scrollbar-thumb:hover {
+    background: #495057;
+}
+
+/* Scrollbar para Firefox */
+.survey_dashboard {
+    scrollbar-width: auto;
+    scrollbar-color: #6c757d #f8f9fa;
+}
+
+/* Asegurar que el scroll funcione en todos los navegadores */
+.survey_dashboard {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding-right: 5px; /* Espacio para el scrollbar */
+}
+
+/* Responsive design profesional */
+@media (max-width: 768px) {
+    .survey_dashboard {
+        max-height: calc(100vh - 80px);
+        padding: 15px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .survey_dashboard .tools_section .card .card {
+        margin-bottom: 1rem;
+    }
+    
+    .survey_dashboard .modal-content {
+        margin: 1rem;
+        border-radius: 0;
+    }
+    
+    .survey_dashboard .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    .summary_view, .detailed_view {
+        /* Sin scroll propio en móviles también */
+    }
+}

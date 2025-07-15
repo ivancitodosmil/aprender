@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Access Rights -->
+    <record id="survey_report_access" model="ir.model.access">
+        <field name="name">survey.report access</field>
+        <field name="model_id" ref="model_survey_report"/>
+        <field name="group_id" ref="survey.group_survey_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <!-- Search View -->
+    <record id="survey_report_search" model="ir.ui.view">
+        <field name="name">survey.report.search</field>
+        <field name="model">survey.report</field>
+        <field name="arch" type="xml">
+            <search string="Survey Report Search">
+                <field name="survey_id"/>
+                <field name="section_name"/>
+                <field name="cumplimiento"/>
+                <separator/>
+                <filter string="Cumple" name="filter_cumple" domain="[('cumplimiento','=','CUMPLE')]"/>
+                <filter string="No Cumple" name="filter_no_cumple" domain="[('cumplimiento','=','NO CUMPLE')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Encuesta" name="group_by_survey" context="{'group_by': 'survey_id'}"/>
+                    <filter string="Sección" name="group_by_section" context="{'group_by': 'section_name'}"/>
+                    <filter string="Cumplimiento" name="group_by_cumplimiento" context="{'group_by': 'cumplimiento'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="survey_report_tree" model="ir.ui.view">
+        <field name="name">survey.report.tree</field>
+        <field name="model">survey.report</field>
+        <field name="arch" type="xml">
+            <tree string="Survey Report" decoration-success="cumplimiento == 'CUMPLE'" decoration-danger="cumplimiento == 'NO CUMPLE'">
+                <field name="survey_id"/>
+                <field name="section_name"/>
+                <field name="items_revisados"/>
+                <field name="items_sin_novedad"/>
+                <field name="porcentaje_cumplimiento" widget="percentage"/>
+                <field name="cumplimiento"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="survey_report_pivot" model="ir.ui.view">
+        <field name="name">survey.report.pivot</field>
+        <field name="model">survey.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Survey Report" display_quantity="true">
+                <field name="survey_id" type="row"/>
+                <field name="section_name" type="row"/>
+                <field name="cumplimiento" type="col"/>
+                <field name="porcentaje_cumplimiento" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph View -->
+    <record id="survey_report_graph" model="ir.ui.view">
+        <field name="name">survey.report.graph</field>
+        <field name="model">survey.report</field>
+        <field name="arch" type="xml">
+            <graph string="Survey Report" type="bar">
+                <field name="survey_id"/>
+                <field name="section_name"/>
+                <field name="porcentaje_cumplimiento" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="survey_report_kanban" model="ir.ui.view">
+        <field name="name">survey.report.kanban</field>
+        <field name="model">survey.report</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_details">
+                                <strong><field name="survey_id"/></strong>
+                                <strong><field name="section_name"/></strong>
+                                <div>
+                                    <span>Revisados: <field name="items_revisados"/></span><br/>
+                                    <span>Sin novedad: <field name = "items_sin_novedad"/></span><br/>
+                                    <span>% Cump.: <field name="porcentaje_cumplimiento" widget="percentage"/></span><br/>
+                                    <span t-attf-class="badge badge-#{record.cumplimiento.raw_value == 'CUMPLE' and 'success' or 'danger'}">
+                                        <field name="cumplimiento"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_survey_report" model="ir.actions.act_window">
+        <field name="name">Survey Report</field>
+        <field name="res_model">survey.report</field>
+        <field name="view_mode">graph,pivot,kanban,tree</field>
+        <field name="search_view_id" ref="survey_report_search"/>
+        <field name="context">{'search_default_group_by_survey': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No se encontraron reportes.
+            </p>
+            <p>
+                Este informe muestra el porcentaje de cumplimiento según los ítems revisados y sin novedad en cada sección.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_survey_report"
+        name="Reportes"
+        parent="survey.menu_surveys"
+        action="internal_control.action_survey_report"
+        sequence="30"/>
+</odoo>

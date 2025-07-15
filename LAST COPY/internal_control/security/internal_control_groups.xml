@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Categoría de grupos de acceso para Control Interno -->
+    <record id="module_category_internal_control" model="ir.module.category">
+        <field name="name">Control Interno</field>
+        <field name="description">Grupos de acceso para el módulo de Control Interno</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="internal_control_employee" model="res.groups">
+        <field name="name">Empleado</field>
+        <field name="category_id" ref="internal_control.module_category_internal_control"/>
+    </record>
+
+
+    <!-- Grupo: Administrador (departamento de control interno y gerencia) -->
+    <record id="internal_control_admin" model="res.groups">
+        <field name="name">Administrador</field>
+        <field name="category_id" ref="internal_control.module_category_internal_control"/>
+    </record>
+
+    <record id="internal_control_superadmin" model="res.groups">
+        <field name="name">Superadministrador</field>
+        <field name="category_id" ref="internal_control.module_category_internal_control"/>
+    </record>
+</odoo> 

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_survey_user_input_pdf">
+    <t t-call="web.basic_layout">
+      <t t-set="doc" t-value="docs[0]"/>
+      <t t-set="company" t-value="env.company"/>
+
+      <!-- PORTADA - PRIMERA PÁGINA SOLA -->
+      <div class="page" style="width: 100%; min-height: 100vh; font-family: 'Helvetica', sans-serif; background-color: white; margin: 0; padding: 40px; page-break-after: always; display: flex; flex-direction: column;">
+        <!-- Logo en la esquina superior izquierda -->
+        <div style="margin-bottom: 100px;">
+          <img t-att-src="'https://farmaciascuxibamba.com.ec/web/image/res.company/%s/logo' % company.id"
+              style="height: 100px;" alt="Logo"/>
+        </div>
+
+        <!-- Contenido centrado -->
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+          <h2 style="margin: 0 0 20px 0; font-size: 32px; font-weight: bold; text-transform: uppercase;">Reporte de Encuesta</h2>
+
+          <div style="width: 80%; margin: 0 auto;">
+            <div style="background-color: rgba(244, 220, 49, 0.35); padding: 15px; text-align: justify; font-size: 14px;">
+              <div style="display: flex; margin-bottom: 10px; white-space: nowrap;">
+                <span style="font-weight: bold; margin-right: 5px;">Encuesta:</span>
+                <span><t t-esc="doc.survey_id.title"/></span>
+              </div>
+              <div style="display: flex; margin-bottom: 10px; white-space: nowrap;">
+                <span style="font-weight: bold; margin-right: 5px;">Participante:</span>
+                <span><t t-esc="doc.partner_id.name or doc.email or doc.nickname or 'Anónimo'"/></span>
+              </div>
+              <div style="display: flex; margin-bottom: 10px; white-space: nowrap;">
+                <span style="font-weight: bold; margin-right: 5px;">Estatus:</span>
+                <span><t t-esc="doc.state"/></span>
+              </div>
+              <div style="display: flex; white-space: nowrap;">
+                <span style="font-weight: bold; margin-right: 5px;">Enviado:</span>
+                <span><t t-esc="doc.end_datetime"/></span>
+              </div>
+              <!-- Departamento -->
+              <t t-if="doc.department_id">
+                <div style="display: flex; margin-bottom: 10px; white-space: nowrap;">
+                  <span style="font-weight: bold; margin-right: 5px;">Departamento:</span>
+                  <span><t t-esc="doc.department_id.name"/></span>
+                </div>
+              </t>
+              <!-- Personas asignadas -->
+              <t t-if="doc.assigned_to_ids">
+                <div style="display: flex; margin-bottom: 10px; white-space: nowrap;">
+                  <span style="font-weight: bold; margin-right: 5px;">Personas asignadas:</span>
+                  <span>
+                    <t t-foreach="doc.assigned_to_ids" t-as="asignado" t-separator=", ">
+                      <t t-esc="asignado.name"/>
+                    </t>
+                  </span>
+                </div>
+              </t>
+              <!-- Cargo -->
+              <t t-if="doc.employee_id and doc.employee_id.job_id">
+                <div style="display: flex; margin-bottom: 10px; white-space: nowrap;">
+                  <span style="font-weight: bold; margin-right: 5px;">Cargo:</span>
+                  <span><t t-esc="doc.employee_id.job_id.name"/></span>
+                </div>
+              </t>
+            </div>
+          </div>
+        </div>
+        </div> <!-- cierre correcto del div de portada -->
+
+      <!-- SEGUNDA PÁGINA - CONTENIDO -->
+      <div class="page" style="position: relative; font-family: 'Helvetica', sans-serif; color: #2c3e50; padding-top: 0px; background-color: rgba(147, 147, 147, 0.03);">
+
+        <!-- Contenido Principal -->
+        <div style="position: relative; z-index: 1;">
+          <h3 style="margin-top: 0; font-weight: bold;">Resumen de la Pregunta 1:</h3>
+          <t t-set="pregunta1" t-value="doc.survey_id.question_ids and doc.survey_id.question_ids.sorted(key=lambda q: q.sequence)[0] or False"/>
+          <t t-if="pregunta1">
+            <p style="font-weight: bold;">Pregunta: <t t-esc="pregunta1.title"/></p>
+            <t t-set="respuestas" t-value="env['survey.user_input.line'].search([('question_id', '=', pregunta1.id)])"/>
+            <t t-foreach="pregunta1.suggested_answer_ids" t-as="opcion">
+              <t t-set="conteo" t-value="respuestas.filtered(lambda r: r.suggested_answer_id and r.suggested_answer_id.id == opcion.id).mapped('id')|length"/>
+              <p><t t-esc="opcion.value"/>: <t t-esc="conteo"/> respuestas</p>
+            </t>
+            <t t-if="pregunta1.question_type == 'text_box'">
+              <p style="font-weight: bold;">Respuestas abiertas:</p>
+              <ul>
+                <t t-foreach="respuestas.filtered(lambda r: r.value_text_box)" t-as="rta">
+                  <li><t t-esc="rta.value_text_box"/></li>
+                </t>
+              </ul>
+            </t>
+          </t>
+          <t t-if="not pregunta1">
+            <p>No se encontró la pregunta 1 en la encuesta.</p>
+          </t>
+        </div>
+
+        <!-- Footer -->
+        <div style="border-top: 1px solid #ccc; margin-top: 40px; padding-top: 10px; text-align: center; font-size: 10px; color: #7f8c8d;">
+          <p>Reporte generado por el sistema interno de encuestas - Farmacias Cuxibamba</p>
+          <p>Dirección: Loja, Ecuador | Tel: (07) 258-XXXX | www.farmaciascuxibamba.com</p>
+        </div>
+
+      </div>
+    </t>
+  </template>
+
+  <record id="action_report_survey_user_input" model="ir.actions.report">
+    <field name="name">Survey Response PDF</field>
+    <field name="model">survey.user_input</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">internal_control.report_survey_user_input_pdf</field>
+    <field name="report_file">internal_control.report_survey_user_input_pdf</field>
+    <field name="print_report_name">'Survey Response - %s' % (object.partner_id.name or 'Anonymous')</field>
+    <field name="binding_model_id" ref="model_survey_user_input"/>
+    <field name="binding_type">report</field>
+  </record>
+</odoo>

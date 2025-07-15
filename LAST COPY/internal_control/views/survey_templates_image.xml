@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit the survey form to add enctype for file uploads -->
+    <template id="survey_form_inherit_multipart" inherit_id="survey.survey_fill_form">
+        <xpath expr="//form[@method='post']" position="attributes">
+            <attribute name="enctype">multipart/form-data</attribute>
+        </xpath>
+    </template>
+
+    <template id="question_container_inherit_image_upload" inherit_id="survey.question_container">
+        <xpath expr="//div[@class='mb-4']/following-sibling::t[1]" position="before">
+            <t t-if="question.question_type == 'image_upload'">
+                <div class="o_survey_answer_wrapper p-1 rounded">
+                    <input type="file" 
+                           accept="image/*" 
+                           class="form-control o_survey_question_image_upload bg-transparent rounded-0 p-0"
+                           t-att-name="str(question.id)"
+                           t-att-data-question-type="question.question_type"
+                           t-att-data-question-id="question.id"/>
+                    <t t-if="answer_lines and answer_lines[0].value_image">
+                        <div class="mt-2">
+                            <img t-att-src="'data:image/*;base64,' + answer_lines[0].value_image" 
+                                 style="max-width: 300px; max-height: 200px;"
+                                 class="img-thumbnail"/>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo> 
